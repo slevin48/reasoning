@@ -2,20 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Plop</title>
+  <title>Plop Bubble Game</title>
   <style>
-    body { font-family: sans-serif; margin: 2rem; }
-    #message { font-size: 1.5rem; margin-top: 1rem; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+    }
+    body {
+      background: radial-gradient(circle at top, #0af, #036);
+      font-family: sans-serif;
+    }
+    #score {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-size: 1.2rem;
+      z-index: 1;
+    }
+    canvas { display: block; }
   </style>
 </head>
 <body>
-  <h1>Plop</h1>
-  <button id="plop-btn">Plop it!</button>
-  <div id="message"></div>
+  <div id="score">Score: 0</div>
+  <canvas id="game"></canvas>
   <script>
-    document.getElementById('plop-btn').addEventListener('click', function () {
-      document.getElementById('message').textContent = 'Plop!';
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    let score = 0;
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const bubbles = [];
+    function spawnBubble() {
+      const radius = Math.random() * 30 + 10;
+      const x = Math.random() * (canvas.width - radius * 2) + radius;
+      const y = canvas.height + radius;
+      const speed = Math.random() * 1 + 0.5;
+      bubbles.push({x, y, radius, speed});
+    }
+
+    function drawBubble(b) {
+      const grad = ctx.createRadialGradient(b.x - b.radius/3, b.y - b.radius/3, b.radius/5, b.x, b.y, b.radius);
+      grad.addColorStop(0, '#ffffffaa');
+      grad.addColorStop(1, '#00aaffdd');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function update() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = bubbles.length - 1; i >= 0; i--) {
+        const b = bubbles[i];
+        b.y -= b.speed;
+        drawBubble(b);
+        if (b.y + b.radius < 0) bubbles.splice(i,1);
+      }
+      requestAnimationFrame(update);
+    }
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      for (let i = bubbles.length - 1; i >= 0; i--) {
+        const b = bubbles[i];
+        const dx = b.x - x;
+        const dy = b.y - y;
+        if (Math.hypot(dx, dy) < b.radius) {
+          bubbles.splice(i,1);
+          score++;
+          document.getElementById('score').textContent = `Score: ${score}`;
+          break;
+        }
+      }
     });
+
+    setInterval(spawnBubble, 800);
+    update();
   </script>
 </body>
 </html>

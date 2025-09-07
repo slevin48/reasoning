@@ -3,10 +3,10 @@ import pathlib
 
 def test_plop_title():
     html = pathlib.Path("plop/index.html").read_text(encoding="utf-8")
-    assert "<title>Plop</title>" in html
+    assert "<title>Plop Bubble Game</title>" in html
 
 
-def test_plop_button_and_message():
+def test_canvas_and_score():
     html = pathlib.Path("plop/index.html").read_text(encoding="utf-8")
-    assert "plop-btn" in html
-    assert "Plop!" in html
+    assert '<canvas id="game">' in html
+    assert 'id="score"' in html

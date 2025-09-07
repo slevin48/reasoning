@@ -2,4 +2,4 @@
 Play around with AI reasoning models 🧠
 
 ## Plop app
-A tiny HTML/JS demo lives at `plop/index.html`. Open it in a browser and click the button to see it plop.
+A bubbly HTML/JS mini-game lives at `plop/index.html`. Open it in a browser to pop rising bubbles and chase a high score.
